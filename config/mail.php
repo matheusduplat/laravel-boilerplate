@@ -29,7 +29,7 @@ return [
     | mailers below. You are free to add additional mailers as required.
     |
     | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
-    |            "postmark", "log", "array", "failover"
+    |            "postmark", "log", "array", "failover", "roundrobin"
     |
     */
 
@@ -50,15 +50,16 @@ return [
             'transport' => 'ses',
         ],
 
-        'mailgun' => [
-            'transport' => 'mailgun',
+        'postmark' => [
+            'transport' => 'postmark',
+            // 'message_stream_id' => null,
             // 'client' => [
             //     'timeout' => 5,
             // ],
         ],
 
-        'postmark' => [
-            'transport' => 'postmark',
+        'mailgun' => [
+            'transport' => 'mailgun',
             // 'client' => [
             //     'timeout' => 5,
             // ],
@@ -83,6 +84,14 @@ return [
             'mailers' => [
                 'smtp',
                 'log',
+            ],
+        ],
+
+        'roundrobin' => [
+            'transport' => 'roundrobin',
+            'mailers' => [
+                'ses',
+                'postmark',
             ],
         ],
     ],
@@ -121,6 +130,5 @@ return [
             resource_path('views/vendor/mail'),
         ],
     ],
-    'url-reset-senha' => env('URL_RESET_SENHA'),
-    'url-front' => env('URL_FRONT'),
+
 ];
