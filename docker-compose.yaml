@@ -2,37 +2,30 @@ version: "3.7"
 
 services:
     # image project
-    app:
+    web:
+        # image: wyveo/nginx-php-fpm:php81
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: ./docker/Dockerfile
         restart: unless-stopped
         working_dir: /var/www/
         volumes:
             - ./:/var/www
+            - ./docker/nginx/sites:/etc/nginx/sites-available
+        ports:
+            - "9999:80" #http
+            - "443:443" #https
+        expose:
+            - 9999
         depends_on:
             - redis
-            - db
-            - nginx
+            - mysql
         networks:
-            - laravel-boilerplate
-        container_name: laravel-app
-          
-
-    # nginx
-    nginx:
-        image: nginx:alpine
-        restart: unless-stopped
-        ports:
-            - "8989:80"
-        volumes:
-            - ./:/var/www
-            - ./docker/nginx/:/etc/nginx/conf.d/
-        networks:
-            - laravel-boilerplate
+            - laravel_boilerplate
+        container_name: laravel_app
 
     # db mysql
-    db:
+    mysql:
         image: mysql:5.7.22
         restart: unless-stopped
         environment:
@@ -46,16 +39,19 @@ services:
         ports:
             - "3388:3306"
         networks:
-            - laravel-boilerplate
+            - laravel_boilerplate
+        container_name: laravel_mysql
 
     # redis
     redis:
         image: redis:latest
+        restart: always
         ports:
             - "6379:6379"
         networks:
-            - laravel-boilerplate
+            - laravel_boilerplate
+        container_name: laravel_redis
 
 networks:
-    laravel-boilerplate:
+    laravel_boilerplate:
         driver: bridge
