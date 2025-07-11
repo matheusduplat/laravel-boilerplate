@@ -33,8 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 if ($e instanceof ValidationException) {
                     $messages = collect($e->errors())->flatten()->values();
-
-                    return response()->json($messages, 422);
+                    return response()->json([
+                        'message' => $messages->join(' | '),
+                        'errors' => $e->errors()
+                    ], 422);
                 }
 
                 return response()->json(
