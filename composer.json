@@ -15,6 +15,7 @@
         "spatie/laravel-permission": "^6.20"
     },
     "require-dev": {
+        "captainhook/captainhook": "^5.25",
         "fakerphp/faker": "^1.23",
         "laravel-lang/lang": "^15.22",
         "laravel/pail": "^1.2.2",
