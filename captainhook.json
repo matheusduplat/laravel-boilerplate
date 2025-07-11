@@ -1,6 +1,6 @@
 {
     "commit-msg": {
-        "enabled": true,
+        "enabled": false,
         "actions": []
     },
     "pre-push": {
@@ -11,7 +11,7 @@
         "enabled": true,
         "actions": [
             {
-                "action": "\\CaptainHook\\App\\Hook\\PHP\\Action\\Linting"
+                "action": "php artisan test"
             }
         ]
     },
