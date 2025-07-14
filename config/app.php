@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Access Simultaneous
+    |--------------------------------------------------------------------------
+    |
+    | This feature enables or disables the ability to have multiple access points to the system.
+    | True: Allows you to access more than one device at a time.
+    | False: Allows you to access only one device at a time.
+    |
+    */
+    'access_simultaneous' => env('ACCESS_SIMULTANEOUS_ENABLED', false),
+
 ];
