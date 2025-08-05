@@ -33,13 +33,10 @@ class AuthController extends Controller
 
         return response()->json('logged out');
     }
-
     public function me()
     {
         $user = Auth::user();
-        return response()->json([
-            'user' => $user
-        ]);
+        return response()->json($user);
     }
     public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction)
     {

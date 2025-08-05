@@ -4,6 +4,7 @@ namespace App\Domains\User\Model;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Domains\User\Traits\UserRelationship;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,7 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, UserRelationship;
 
     protected $table = 'users';
 

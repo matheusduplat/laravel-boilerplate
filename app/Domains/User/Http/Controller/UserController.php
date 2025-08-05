@@ -14,6 +14,12 @@ class UserController extends Controller
      */
     public function index(Request $request,  UsersAction $usersAction)
     {
+        $users = $usersAction->execute($request->all(), false);
+        return response()->json($users);
+    }
+
+    public function withPagination(Request $request,  UsersAction $usersAction)
+    {
         $users = $usersAction->execute($request->all(), true);
         return response()->json($users);
     }
@@ -23,7 +29,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::create($request->all());
+        return response()->json($user);
     }
 
     /**

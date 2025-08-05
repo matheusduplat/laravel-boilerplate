@@ -17,7 +17,7 @@ class UsersAction
                 $query->where('email', 'like', "%{$data['email']}%");
             });
 
-        $users = $is_paginate ? $users->paginate(10) : $users->get();
+        $users = $is_paginate ? $users->paginate($data['per_page'] ?? 10) : $users->get();
         return UserResource::collection($users);
     }
 

@@ -12,7 +12,9 @@ class TrustedDevice extends Model
     protected $fillable = [
         'user_id',
         'device_token_hash',
-        'device_name',
+        'device',
+        'platform',
+        'browser',
         'user_agent',
         'ip_address',
         'expires_at',

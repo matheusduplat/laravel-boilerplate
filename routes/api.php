@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'auth.'], function () {
-    include __DIR__ . '/route/auth.php';
+    include __DIR__ . '/entities/auth.php';
 });
 Route::group(['as' => 'user.', 'prefix' => 'user'], function () {
-    include __DIR__ . '/route/user.php';
+    include __DIR__ . '/entities/user.php';
 });

@@ -3,6 +3,7 @@
 namespace App\Domains\Auth\Http\Actions;
 
 use App\Domains\CodeVerification\Model\CodeVerification;
+use App\Domains\TrustedDevice\Http\Actions\TrustedDeviceAction;
 use App\Domains\TrustedDevice\Model\TrustedDevice;
 use App\Domains\User\Model\User;
 use App\Notifications\SendCodeVerificationNotification;
@@ -13,6 +14,8 @@ class LoginAction
 {
     public function execute(array $data)
     {
+
+        $trustedDeviceAction = new TrustedDeviceAction();
         $user = User::where('email', $data['email'])->first();
 
         if (! $user) {
@@ -22,23 +25,33 @@ class LoginAction
             return response()->json(['message' => 'Invalid password'], 403);
         }
 
-        if (!$user->email_verified_at) {
+        if (!$user->hasVerifiedEmail()) {
             return response()->json(['message' => 'Email not verified'], 403);
         }
 
-        if (!$user->secure_login_email) {
-            return $this->authenticate($user);
-        }
+
 
         $deviceToken = $data['X-Device-Token'];
         $userAgent = $data['User-Agent'];
         $ip = $data['ip'];
 
+        if (!$user->secure_login_email) {
+
+            if ($deviceToken  && $ip && $userAgent) {
+                $trustedDeviceAction->execute($user, $deviceToken, $ip, $userAgent);
+            }
+
+            return $this->authenticate($user);
+        }
+
+
         if ($deviceToken) {
             $trusted = TrustedDevice::where('user_id', $user->id)
                 ->where('expires_at', '>', now())
-                ->where('device_token_hash', Hash::make($deviceToken))
-                ->first();
+                ->get()
+                ->first(function ($device) use ($deviceToken) {
+                    return Hash::check($deviceToken, $device->device_token_hash);
+                });
 
             if ($trusted) {
                 return $this->authenticate($user);

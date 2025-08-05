@@ -2,13 +2,13 @@
 
 namespace App\Domains\TrustedDevice\Traits;
 
-use App\Domains\TrustedDevice\Model\TrustedDevice;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Domains\User\Model\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait TrustedDeviceRelationship
 {
-    public function trustedDevices(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(TrustedDevice::class);
+        return $this->belongTo(User::class);
     }
 }
