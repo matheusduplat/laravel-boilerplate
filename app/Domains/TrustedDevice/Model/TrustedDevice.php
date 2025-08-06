@@ -4,10 +4,12 @@ namespace App\Domains\TrustedDevice\Model;
 
 use App\Domains\TrustedDevice\Traits\TrustedDeviceRelationship;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use \OwenIt\Auditing\Auditable as AuditableTrait;
 
-class TrustedDevice extends Model
+class TrustedDevice extends Model implements Auditable
 {
-    use TrustedDeviceRelationship;
+    use TrustedDeviceRelationship, AuditableTrait;
     protected $table = 'trusted_devices';
     protected $fillable = [
         'user_id',

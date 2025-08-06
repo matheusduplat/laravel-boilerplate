@@ -8,17 +8,18 @@ use App\Domains\User\Traits\UserMethod;
 use App\Domains\User\Traits\UserRelationship;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Permission\Traits\HasRoles;
 use \OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Facades\Auditor;
 
 class User extends Authenticatable implements MustVerifyEmail, Auditable
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles, UserRelationship, AuditableTrait, UserMethod;
+    use SoftDeletes;
 
 
     protected $table = 'users';
