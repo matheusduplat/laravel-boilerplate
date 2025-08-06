@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "opcodesio/log-viewer": "^3.18",
+        "owen-it/laravel-auditing": "^14.0",
         "spatie/laravel-permission": "^6.20"
     },
     "require-dev": {
