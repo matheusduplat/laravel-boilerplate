@@ -11,11 +11,20 @@ use App\Domains\User\Model\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
+use Dedoc\Scramble\Attributes\HeaderParameter;
 
 class AuthController extends Controller
 {
+    /**
+     * login
+     * 
+     * Efetua o login do usuário
+     * 
+     * @unauthenticated
+     * 
+     * 
+     */
+    #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
     public function login(LoginRequest $request, LoginAction $loginAction)
     {
         $data = $request->validated();
@@ -27,17 +36,45 @@ class AuthController extends Controller
         return $loginAction->execute($data);
     }
 
+    /**
+     *
+     * logout
+     *
+     * Deslogar o usuário
+     *
+     * 
+     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json('logged out');
+        return response()->json(['message' => 'logged out']);
     }
+
+
+    /**
+     *
+     * me
+     *
+     * Retorna o usuário autenticado
+     *
+     * 
+     */
     public function me()
     {
         $user = Auth::user();
         return response()->json($user);
     }
+
+    /**
+     * 
+     * verifyCode
+     * 
+     * Valida o código de verificação do usuário | somente se o usuário estiver com a flag secure_login_email true
+     * 
+     * @unauthenticated
+     */
+    #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
     public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction)
     {
 

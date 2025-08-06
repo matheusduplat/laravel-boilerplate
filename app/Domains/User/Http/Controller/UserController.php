@@ -3,24 +3,28 @@
 namespace App\Domains\User\Http\Controller;
 
 use App\Domains\User\Http\Actions\UsersAction;
+use App\Domains\User\Http\Requests\UserRequest;
 use App\Domains\User\Model\User;
 use App\Http\Controllers\Controller;
+use Dedoc\Scramble\Attributes\Response;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * get all users
+     * 
+     * 
      */
-    public function index(Request $request,  UsersAction $usersAction)
+    public function index(UserRequest $request,  UsersAction $usersAction)
     {
-        $users = $usersAction->execute($request->all(), false);
+        $users = $usersAction->execute($request->validated(), false);
         return response()->json($users);
     }
 
-    public function withPagination(Request $request,  UsersAction $usersAction)
+    public function withPagination(UserRequest $request,  UsersAction $usersAction)
     {
-        $users = $usersAction->execute($request->all(), true);
+        $users = $usersAction->execute($request->validated(), true);
         return response()->json($users);
     }
 
