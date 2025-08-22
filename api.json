@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://laravel-boilerplate.test/api"
+            "url": "https://atitudesaude-test.test/api"
         }
     ],
     "security": [
@@ -72,7 +72,7 @@
                                                     "type": "string"
                                                 },
                                                 "user": {
-                                                    "type": "string"
+                                                    "$ref": "#/components/schemas/UserResource"
                                                 }
                                             },
                                             "required": [
@@ -185,7 +185,7 @@
                                             "type": "string"
                                         },
                                         "user": {
-                                            "type": "string"
+                                            "$ref": "#/components/schemas/UserResource"
                                         }
                                     },
                                     "required": [
@@ -284,51 +284,6 @@
                     }
                 }
             }
-        },
-        "/user": {
-            "get": {
-                "operationId": "user.index",
-                "summary": "get all users",
-                "tags": [
-                    "User"
-                ],
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    },
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "maxLength": 255
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "integer",
-                                    "enum": [
-                                        403
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "$ref": "#/components/responses/ValidationException"
-                    }
-                }
-            }
         }
     },
     "components": {
@@ -355,6 +310,10 @@
                     "password"
                 ],
                 "title": "LoginRequest"
+            },
+            "UserResource": {
+                "type": "string",
+                "title": "UserResource"
             },
             "VerifyCodeRequest": {
                 "type": "object",

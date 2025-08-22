@@ -5,6 +5,7 @@ namespace App\Domains\Auth\Http\Actions;
 use App\Domains\CodeVerification\Model\CodeVerification;
 use App\Domains\TrustedDevice\Http\Actions\TrustedDeviceAction;
 use App\Domains\TrustedDevice\Model\TrustedDevice;
+use App\Domains\User\Http\Resources\UserAuthResources;
 use App\Domains\User\Model\User;
 use App\Notifications\SendCodeVerificationNotification;
 use Illuminate\Support\Facades\Hash;
@@ -14,22 +15,21 @@ class LoginAction
 {
     public function execute(array $data)
     {
-
-        $trustedDeviceAction = new TrustedDeviceAction();
         $user = User::where('email', $data['email'])->first();
-
         if (! $user) {
-            return response()->json(['message' => 'Invalid email'], 403);
+            return response()->json(['message' => __('User not found')], 403);
         }
+
         if (! Hash::check($data['password'], $user->password)) {
-            return response()->json(['message' => 'Invalid password'], 403);
+            return response()->json(['message' => __('Invalid password')], 403);
         }
 
         if (!$user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email not verified'], 403);
+            return response()->json(['message' => __('Email not verified'), 'user' => $user], 403);
         }
 
 
+        $trustedDeviceAction = new TrustedDeviceAction();
 
         $deviceToken = $data['X-Device-Token'];
         $userAgent = $data['User-Agent'];
@@ -40,13 +40,15 @@ class LoginAction
             if ($deviceToken  && $ip && $userAgent) {
                 $trustedDeviceAction->execute($user, $deviceToken, $ip, $userAgent);
             }
-
             return $this->authenticate($user);
         }
 
 
         if ($deviceToken) {
-            $trusted = TrustedDevice::where('user_id', $user->id)
+            $trusted =
+                TrustedDevice::query()
+                ->where('owner_id', $user->id)
+                ->where('owner_type', $user->getMorphClass())
                 ->where('expires_at', '>', now())
                 ->get()
                 ->first(function ($device) use ($deviceToken) {
@@ -59,7 +61,7 @@ class LoginAction
         }
 
         $this->sendVerificationCode($user);
-        return response()->json(['message' => 'Code sent to email'], 200);
+        return response()->json(['message' => __('Code sent to email')], 200);
     }
 
     public function authenticate(User $user)
@@ -68,11 +70,12 @@ class LoginAction
             $user->tokens()->delete();
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token_employee')->plainTextToken;
 
         return response()->json([
+            "message" => __("success login"),
             'token' => $token,
-            'user' => $user
+            'user' => new UserAuthResources($user)
         ]);
     }
     public function sendVerificationCode(User $user)
@@ -88,6 +91,7 @@ class LoginAction
             ['email' => $user->email],
             [
                 'code' => $code,
+                'guard' => 'sanctum',
                 'expires_at' => now()->addMinutes(10),
             ]
         );

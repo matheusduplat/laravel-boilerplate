@@ -12,7 +12,8 @@ class TrustedDevice extends Model implements Auditable
     use TrustedDeviceRelationship, AuditableTrait;
     protected $table = 'trusted_devices';
     protected $fillable = [
-        'user_id',
+        'owner_id',
+        'owner_type',
         'device_token_hash',
         'device',
         'platform',

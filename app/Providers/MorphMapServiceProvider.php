@@ -2,6 +2,15 @@
 
 namespace App\Providers;
 
+use App\Domains\Address\Model\Address;
+use App\Domains\Bill\Model\Bill;
+use App\Domains\CodeVerification\Model\CodeVerification;
+use App\Domains\Customer\Model\Customer;
+use App\Domains\Employee\Model\Employee;
+use App\Domains\Permission\Model\Permission;
+use App\Domains\Phone\Model\Phone;
+use App\Domains\Role\Model\Role;
+use App\Domains\TrustedDevice\Model\TrustedDevice;
 use App\Domains\User\Model\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +32,15 @@ class MorphMapServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
             'User' => User::class,
+            "Employee" => Employee::class,
+            "Phone" => Phone::class,
+            "TrustedDevice" => TrustedDevice::class,
+            "Role" => Role::class,
+            "Customer" => Customer::class,
+            "CodeVerification" => CodeVerification::class,
+            "Permission" => Permission::class,
+            "Address" => Address::class,
+            "Bill" => Bill::class
         ]);
     }
 }

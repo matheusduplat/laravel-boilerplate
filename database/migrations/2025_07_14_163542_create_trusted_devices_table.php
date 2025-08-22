@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('trusted_devices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->morphs('owner');
             $table->string('device_token_hash')->unique();
             $table->string('device')->nullable();
             $table->string('platform')->nullable();

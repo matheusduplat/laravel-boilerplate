@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Middleware\AuthBasicMiddleware;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -10,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -29,9 +33,12 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
         $exceptions->render(function (Exception $e, Request $request) {
-            Log::error($e->getMessage());
+            if (!$e instanceof AuthenticationException) {
+                Log::error($e->getMessage(), $e->getTrace());
+            }
 
             if ($request->is('api/*')) {
+                $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
 
                 if ($e instanceof ValidationException) {
                     $messages = collect($e->errors())->flatten()->values();
@@ -41,10 +48,30 @@ return Application::configure(basePath: dirname(__DIR__))
                     ], 422);
                 }
 
-                return response()->json(
-                    $e->getMessage(),
-                    500
-                );
+                if ($e instanceof NotFoundHttpException) {
+                    if ($e->getPrevious() instanceof ModelNotFoundException) {
+                        $modelException = $e->getPrevious();
+                        $model = class_basename($modelException->getModel());
+                        $ids = implode(', ', $modelException->getIds() ?? []);
+                        return response()->json([
+                            'message' => __('exceptions.model_not_found', ['model' => $model, 'ids' => $ids])
+                        ], 404);
+                    }
+                    return response()->json([
+                        'message' => __('exceptions.route_not_found', ['route' => $request->path()])
+                    ], $status);
+                }
+
+                if ($e instanceof AuthenticationException) {
+                    return response()->json([
+                        'message' => $e->getMessage()
+                    ], 403);
+                }
+
+                return response()->json([
+                    'message' => __($e->getMessage())
+                ], $status);
             }
         });
-    })->create();
+    })
+    ->create();

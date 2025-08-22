@@ -2,6 +2,8 @@
 
 namespace App\Domains\Audit\Service;
 
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Request;
 use OwenIt\Auditing\Models\Audit;
 
 class AuditService
@@ -17,11 +19,26 @@ class AuditService
                 'event' => $event,
                 'old_values' => [$key => $old],
                 'new_values' => [$key => $new],
-                'url' => request()->fullUrl(),
+                'url' => self::resolveUrl(),
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'tags' => 'manual',
             ]);
         }
+    }
+
+    public static function resolveUrl(): string
+    {
+
+        if (App::runningInConsole()) {
+            $command = Request::server('argv', null);
+            if (is_array($command)) {
+                return implode(' ', $command);
+            }
+
+            return 'console';
+        }
+
+        return Request::fullUrl();
     }
 }

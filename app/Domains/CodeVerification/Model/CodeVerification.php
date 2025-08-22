@@ -10,7 +10,7 @@ class CodeVerification extends Model implements Auditable
 {
     use  AuditableTrait;
     protected $table = 'code_verifications';
-    protected $fillable = ['email', 'code', 'expires_at'];
+    protected $fillable = ['email', 'code', 'expires_at', 'guard'];
 
     protected $casts = [
         'expires_at' => 'datetime',

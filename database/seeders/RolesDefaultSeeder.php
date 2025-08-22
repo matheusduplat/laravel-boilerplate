@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Domains\Role\Enums\RoleDefaults;
+use App\Domains\Role\Model\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class RolesDefaultSeeder extends Seeder
 {
@@ -14,7 +15,11 @@ class RolesDefaultSeeder extends Seeder
     public function run(): void
     {
         Role::updateOrCreate([
-            'name' => 'Administrador',
+            'name' => RoleDefaults::ADMIN,
+        ]);
+        Role::updateOrCreate([
+            'name' => RoleDefaults::CLIENT,
+            'guard_name' => 'customer',
         ]);
     }
 }

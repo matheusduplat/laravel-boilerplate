@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Customer\Model\Customer;
 use App\Domains\User\Model\User;
 
 return [
@@ -16,7 +17,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'api'),
+        'guard' => env('AUTH_GUARD', 'sanctum'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -46,6 +47,14 @@ return [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
+        'customer' => [
+            'driver' => 'sanctum',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -70,7 +79,10 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
         ],
-
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => Customer::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -100,7 +112,25 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            'expire' => 60 * 5,
+            'throttle' => 60,
+        ],
+        'create_password' => [
+            'provider' => 'users',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 4320, // 3 dias
+            'throttle' => 60,
+        ],
+        'customer' => [
+            'provider' => 'customers',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60 * 5,
+            'throttle' => 60,
+        ],
+        'create_password_customer' => [
+            'provider' => 'customers',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 4320, // 3 dias
             'throttle' => 60,
         ],
     ],

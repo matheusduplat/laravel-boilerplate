@@ -6,6 +6,9 @@ namespace App\Domains\User\Model;
 
 use App\Domains\User\Traits\UserMethod;
 use App\Domains\User\Traits\UserRelationship;
+use App\Trait\GlobalRelationship;
+use App\Trait\GlobalSoftDelete;
+use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +22,7 @@ use \OwenIt\Auditing\Auditable as AuditableTrait;
 class User extends Authenticatable implements MustVerifyEmail, Auditable
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles, UserRelationship, AuditableTrait, UserMethod;
-    use SoftDeletes;
+    use GlobalSoftDelete, GlobalRelationship;
 
 
     protected $table = 'users';
@@ -34,7 +37,10 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         'email',
         'password',
         'email_verified_at',
-        'secure_login_email'
+        'secure_login_email',
+        'created_by',
+        'updated_by',
+        'deleted_by',
     ];
 
     /**
@@ -59,5 +65,9 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
             'password' => 'hashed',
             'secure_login_email' => 'boolean'
         ];
+    }
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 }

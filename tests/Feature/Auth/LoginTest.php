@@ -5,6 +5,12 @@ use App\Domains\User\Model\User;
 use App\Notifications\SendCodeVerificationNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+beforeEach(function () {
+    $this->seed();
+});
 
 describe('Login', function () {
 
@@ -37,7 +43,7 @@ describe('Login', function () {
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => 'Email not verified',
+            'message' => __('Email not verified'),
         ]);
     });
 
@@ -53,7 +59,7 @@ describe('Login', function () {
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => 'Invalid password',
+            'message' => __('Invalid password'),
         ]);
     });
 
@@ -68,7 +74,7 @@ describe('Login', function () {
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => 'Invalid email',
+            'message' => __('User not found'),
         ]);
     });
 
@@ -95,7 +101,7 @@ describe('Login', function () {
 
         $response = $this->postJson('/api/login', $data)
             ->assertOk()
-            ->assertJson(['message' => 'Code sent to email']);
+            ->assertJson(['message' => __('Code sent to email')]);
 
         Notification::assertSentTo($user, SendCodeVerificationNotification::class);
     });
@@ -116,6 +122,7 @@ describe('Login', function () {
         CodeVerification::create([
             'email' => $user->email,
             'code' => $code,
+            'guard' => 'sanctum',
             'expires_at' => now()->addMinutes(10),
         ]);
 
@@ -141,7 +148,8 @@ describe('Login', function () {
 
         // Verifica se o dispositivo foi salvo
         $this->assertDatabaseHas('trusted_devices', [
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
+            'owner_type' => $user->getMorphClass(),
             'user_agent' => 'Mozilla/5.0 Chrome/114.0',
         ]);
     });
@@ -161,6 +169,6 @@ describe('Login', function () {
             'code' => '000000',
         ])
             ->assertStatus(401)
-            ->assertJson(['message' => 'Code invalid or expired']);
+            ->assertJson(['message' => __('Code invalid or expired')]);
     });
 });

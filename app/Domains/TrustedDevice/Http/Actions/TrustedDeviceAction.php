@@ -9,19 +9,22 @@ use Jenssegers\Agent\Agent;
 
 class TrustedDeviceAction
 {
-    public function execute(User $user, string $deviceToken, string $ip, string $userAgent)
+    public function execute($model, string $deviceToken, string $ip, string $userAgent)
     {
         $agent = new Agent();
         $agent->setUserAgent($userAgent);
 
-        $existing =  TrustedDevice::where('user_id', $user->id)
+        $existing =  TrustedDevice::query()
+            ->where('owner_id', $model->id)
+            ->where('owner_type', $model->getMorphClass())
             ->get()
             ->first(function ($device) use ($deviceToken) {
                 return Hash::check($deviceToken, $device->device_token_hash);
             });
         if (!$existing) {
             TrustedDevice::create([
-                'user_id' => $user->id,
+                'owner_id' => $model->id,
+                'owner_type' => $model->getMorphClass(),
                 'device_token_hash' => Hash::make($deviceToken),
                 'device' => $agent->device() ?? "Desconhecido",
                 'platform' => $agent->platform() ?? "Desconhecido",
