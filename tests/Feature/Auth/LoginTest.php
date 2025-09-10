@@ -39,11 +39,10 @@ describe('Login', function () {
         $user = User::where('email', $data['email'])->first();
         $user->update(['email_verified_at' => null]);
 
-
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => __('Email not verified'),
+            'message' => __('Email not verified.'),
         ]);
     });
 
@@ -59,7 +58,7 @@ describe('Login', function () {
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => __('Invalid password'),
+            'message' => __('Invalid password.'),
         ]);
     });
 
@@ -74,7 +73,7 @@ describe('Login', function () {
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([
-            'message' => __('User not found'),
+            'message' => __('User not found.'),
         ]);
     });
 
@@ -101,7 +100,7 @@ describe('Login', function () {
 
         $response = $this->postJson('/api/login', $data)
             ->assertOk()
-            ->assertJson(['message' => __('Code sent to email')]);
+            ->assertJson(['message' => __('Code sent to email.')]);
 
         Notification::assertSentTo($user, SendCodeVerificationNotification::class);
     });
@@ -169,6 +168,6 @@ describe('Login', function () {
             'code' => '000000',
         ])
             ->assertStatus(401)
-            ->assertJson(['message' => __('Code invalid or expired')]);
+            ->assertJson(['message' => __('Code invalid or expired.')]);
     });
 });

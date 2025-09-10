@@ -17,15 +17,14 @@ class LoginAction
     {
         $user = User::where('email', $data['email'])->first();
         if (! $user) {
-            return response()->json(['message' => __('User not found')], 403);
+            return response()->json(['message' => __('User not found.')], 403);
         }
 
         if (! Hash::check($data['password'], $user->password)) {
-            return response()->json(['message' => __('Invalid password')], 403);
+            return response()->json(['message' => __('Invalid password.')], 403);
         }
-
         if (!$user->hasVerifiedEmail()) {
-            return response()->json(['message' => __('Email not verified'), 'user' => $user], 403);
+            return response()->json(['message' => __('Email not verified.'), 'user' => $user], 403);
         }
 
 
@@ -61,7 +60,7 @@ class LoginAction
         }
 
         $this->sendVerificationCode($user);
-        return response()->json(['message' => __('Code sent to email')], 200);
+        return response()->json(['message' => __('Code sent to email.')], 200);
     }
 
     public function authenticate(User $user)
@@ -73,7 +72,7 @@ class LoginAction
         $token = $user->createToken('auth_token_employee')->plainTextToken;
 
         return response()->json([
-            "message" => __("success login"),
+            "message" => __("success login."),
             'token' => $token,
             'user' => new UserAuthResources($user)
         ]);

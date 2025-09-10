@@ -14,8 +14,8 @@ class AuditService
             Audit::create([
                 'auditable_type' => $model->getMorphClass(),
                 'auditable_id' => $model->id,
-                'user_type' => auth()->check() ? auth()->user()->getMorphClass() : null,
-                'user_id' => auth()->id() ?? null,
+                'owner_type' => auth()->check() ? auth()->user()->getMorphClass() : null,
+                'owner_id' => auth()->id() ?? null,
                 'event' => $event,
                 'old_values' => [$key => $old],
                 'new_values' => [$key => $new],

@@ -11,7 +11,7 @@ class UpdateRoleAction
     {
         $data['updated_by'] = Auth::user()->name ?? null;
         $role->update($data);
-        $role->syncPermissionsWithAudit($data['permissions']);
+        $role->auditSync('permissions', $data['permissions']);
         return $role;
     }
 }

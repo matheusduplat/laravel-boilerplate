@@ -42,4 +42,8 @@ class EmployeePolicy
     {
         return $user->hasAnyPermission(['admin.profile.read']);
     }
+    public function componentSelect(User $user)
+    {
+        return $user->hasAnyPermission(['admin.employee.create', 'admin.employee.update', 'admin.employee.read']);
+    }
 }

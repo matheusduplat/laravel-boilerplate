@@ -26,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
 
     protected $table = 'users';
-
+    protected $guard_name = 'sanctum';
     /**
      * The attributes that are mass assignable.
      *
@@ -69,5 +69,9 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return "user.{$this->id}";
     }
 }

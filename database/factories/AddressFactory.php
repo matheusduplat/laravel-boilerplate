@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Domains\Address\Model\Address;
+use App\Domains\State\Model\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +21,7 @@ class AddressFactory extends Factory
     {
         return [
             'zip_code' => fake()->postcode(),
-            'state' => fake()->state(),
+            'state' => State::all()->random()->code,
             'city' => fake()->city(),
             'neighborhood' => fake()->streetName(),
             'street' => fake()->streetAddress(),

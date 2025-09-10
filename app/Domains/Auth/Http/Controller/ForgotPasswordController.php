@@ -17,9 +17,9 @@ class ForgotPasswordController extends Controller
         $status = Password::sendResetLink($data);
 
         if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status, ['type' => "criar"])]);
+            return response()->json(['message' => __($status, ['type' => __("reset")])]);
         }
-        return response()->json(['message' => __($status, ['type' => "criação"])], 400);
+        return response()->json(['message' => __($status, ['type' => __("redefinition")])], 400);
     }
     public function sendResetLinkEmailCustomer(ForgotPasswordRequest $request)
     {
@@ -28,8 +28,8 @@ class ForgotPasswordController extends Controller
         $status = Password::broker('customer')->sendResetLink($data);
 
         if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status, ['type' => "criar"])]);
+            return response()->json(['message' => __($status, ['type' => __("reset")])]);
         }
-        return response()->json(['message' => __($status, ['type' => "criação"])], 400);
+        return response()->json(['message' => __($status, ['type' => __("redefinition")])], 400);
     }
 }

@@ -25,6 +25,7 @@ class UpdateProfileCustomerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'name_social' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers')->ignore($this->customer)],
             'cpf' => ['required', 'string', 'min:11', Rule::unique('customers')->ignore($this->customer)],
             'birth_date' => ['required', 'date_format:Y-m-d',],

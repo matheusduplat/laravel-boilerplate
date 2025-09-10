@@ -160,16 +160,16 @@ class PermissionsSeeder extends Seeder
             ]
         );
 
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.customer.create'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a cadastrar Cliente',
-        //         'action' => 'create',
-        //         'subject' => 'adminCustomer'
-        //     ]
-        // );
+        Permission::updateOrCreate(
+            [
+                'name' => 'admin.customer.create'
+            ],
+            [
+                'description' => 'Acesso a cadastrar Cliente',
+                'action' => 'create',
+                'subject' => 'adminCustomer'
+            ]
+        );
         Permission::updateOrCreate(
             [
                 'name' => 'admin.customer.update'
@@ -180,26 +180,26 @@ class PermissionsSeeder extends Seeder
                 'subject' => 'adminCustomer'
             ]
         );
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.customer.delete'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a deletar Cliente',
-        //         'action' => 'delete',
-        //         'subject' => 'adminCustomer'
-        //     ]
-        // );
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.customer.restore'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a restaurar Cliente',
-        //         'action' => 'restore',
-        //         'subject' => 'adminCustomer'
-        //     ]
-        // );
+        Permission::updateOrCreate(
+            [
+                'name' => 'admin.customer.delete'
+            ],
+            [
+                'description' => 'Acesso a deletar Cliente',
+                'action' => 'delete',
+                'subject' => 'adminCustomer'
+            ]
+        );
+        Permission::updateOrCreate(
+            [
+                'name' => 'admin.customer.restore'
+            ],
+            [
+                'description' => 'Acesso a restaurar Cliente',
+                'action' => 'restore',
+                'subject' => 'adminCustomer'
+            ]
+        );
         Permission::updateOrCreate(
             [
                 'name' => 'admin.customer.read'
@@ -208,69 +208,6 @@ class PermissionsSeeder extends Seeder
                 'description' => 'Acesso a visualizar Cliente',
                 'action' => 'read',
                 'subject' => 'adminCustomer'
-            ]
-        );
-
-        //bill
-        Permission::updateOrCreate(
-            [
-                'name' => 'admin.bill'
-            ],
-            [
-                'description' => 'Acesso a tudo de Boletos',
-                'action' => 'manage',
-                'subject' => 'adminBill'
-            ]
-        );
-
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.bill.create'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a cadastrar Boletos',
-        //         'action' => 'create',
-        //         'subject' => 'adminBill'
-        //     ]
-        // );
-        Permission::updateOrCreate(
-            [
-                'name' => 'admin.bill.update'
-            ],
-            [
-                'description' => 'Acesso a editar Boletos',
-                'action' => 'update',
-                'subject' => 'adminBill'
-            ]
-        );
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.bill.delete'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a deletar Boletos',
-        //         'action' => 'delete',
-        //         'subject' => 'adminBill'
-        //     ]
-        // );
-        // Permission::updateOrCreate(
-        //     [
-        //         'name' => 'admin.bill.restore'
-        //     ],
-        //     [
-        //         'description' => 'Acesso a restaurar Boletos',
-        //         'action' => 'restore',
-        //         'subject' => 'adminBill'
-        //     ]
-        // );
-        Permission::updateOrCreate(
-            [
-                'name' => 'admin.bill.read'
-            ],
-            [
-                'description' => 'Acesso a visualizar Boletos',
-                'action' => 'read',
-                'subject' => 'adminBill'
             ]
         );
     }

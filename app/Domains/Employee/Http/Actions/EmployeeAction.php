@@ -8,7 +8,9 @@ use App\Domains\Employee\Model\Employee;
 
 class EmployeeAction
 {
-    public function execute(array $data, bool $is_paginate)
+
+
+    public function query(array $data, bool $is_paginate)
     {
         $employees = Employee::query()
 
@@ -23,17 +25,28 @@ class EmployeeAction
             ->when(isset($data['status']), function ($query) use ($data) {
                 $query->where('status',  $data['status']);
             });
-        if ($data['with_trashed']) {
+
+
+        if (isset($data['with_trashed']) && $data['with_trashed']) {
             $employees->withTrashed()->relationWithTrashed();
         } else {
             $employees->with(['user', 'phones']);
         }
 
         if ($is_paginate) {
-            $employees = $employees->paginate($data['per_page'] ?? 10);
+            return $employees->paginate($data['per_page'] ?? 10);
+        }
+        return $employees->get();
+    }
+
+
+    public function execute(array $data, bool $is_paginate)
+    {
+        $employees = $this->query($data, $is_paginate);
+
+        if ($is_paginate) {
             return new EmployeeWithPaginationResource($employees);
         }
-        $employees =  $employees->get();
         return EmployeeResource::collection($employees);
     }
 }

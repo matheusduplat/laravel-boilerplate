@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Domains\Employee\Enums\EmployeeStatus;
 use App\Domains\Employee\Model\Employee;
+use App\Domains\User\Model\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,5 +24,13 @@ class EmployeeFactory extends Factory
             'name' => fake()->name(),
             'status' => fake()->randomElement(EmployeeStatus::cases()),
         ];
+    }
+
+    public function user()
+    {
+        return $this->state(function (array $item) {
+            $item['user_id'] = User::factory()->administrador()->create()->id;
+            return $item;
+        });
     }
 }

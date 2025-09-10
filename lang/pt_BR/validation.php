@@ -156,6 +156,7 @@ return [
     'uuid'                   => 'O campo :attribute deve ser um UUID válido.',
 
 
+
     'attributes' => [
         'name' => 'nome',
         'username' => 'nome de usuário',
@@ -228,5 +229,12 @@ return [
         'low_date' => 'data de baixa do boleto',
         'value' => 'valor',
         'customer_id' => 'cliente',
+        'note_customer' => 'observação do cliente',
+        'location_performing_procedure' => 'locais para realizar o procedimento',
+        'attachment' => 'anexo da solicitação',
+        'code_guide' => 'código do guia',
+        'status_procedure' => 'status do procedimento',
+        'date_close' => 'data de fechamento',
+        "request_management_id" => "solicitação",
     ],
 ];

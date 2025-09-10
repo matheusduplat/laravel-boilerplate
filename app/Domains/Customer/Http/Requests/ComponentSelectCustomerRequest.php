@@ -25,7 +25,6 @@ class ComponentSelectCustomerRequest extends FormRequest
     {
         return [
             'name' => ['nullable', 'string', 'max:255'],
-            'with_trashed' => ['required', 'boolean'],
         ];
     }
 }

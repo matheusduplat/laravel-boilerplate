@@ -17,10 +17,10 @@ class UpdateUserAction
         $user->update($data);
 
         if (isset($data['role'])) {
-            $user->syncRolesWithAudit([$data['role']]);
+            $user->auditSync('roles', $data['role']);
         }
         if (isset($data['permissions'])) {
-            $user->syncPermissionsWithAudit($data['permissions']);
+            $user->auditSync('permissions', $data['permissions']);
         }
 
 

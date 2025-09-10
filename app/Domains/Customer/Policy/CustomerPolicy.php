@@ -48,9 +48,9 @@ class CustomerPolicy
     {
         return $user->hasAnyPermission(['admin.customer.restore']);
     }
-    public function show(User $user, Customer $customer): bool
+    public function show(User|Customer $user, Customer $customer): bool
     {
-        return $user->hasAnyPermission(['admin.customer.read']);
+        return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.read']);
     }
 
     /**
@@ -87,6 +87,13 @@ class CustomerPolicy
     {
         if ($user instanceof Customer && $user->id !== $customer->id) {
             abort(403, __("You cannot edit another customer's profile."));
+        }
+        return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);
+    }
+    public function updatePassword(User|Customer $user, Customer $customer)
+    {
+        if ($user instanceof Customer && $user->id !== $customer->id) {
+            abort(403, __("You cannot edit another customer's password."));
         }
         return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);
     }

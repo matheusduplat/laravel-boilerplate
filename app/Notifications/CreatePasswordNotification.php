@@ -44,7 +44,7 @@ class CreatePasswordNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Crie sua senha')
             ->greeting("Olá! {$notifiable->name}")
-            ->line('Seja bem vindo ao nosso sistema ' . config('app.name') . ' e esse é um email de criação de senha, mas antes de poder utilizar o sistema, precisamos que crie uma senha clicando no botão abaixo')
+            ->line('Seja bem vindo ao nosso sistema ' . config('app.name') . ' e esse é um email de criação de senha, para acessar o sistema, precisamos que crie uma senha clicando no botão abaixo')
             ->action('Criar Senha', url($url))
             // ->line(__('Este link de criação de senha irá expirar em :count minutos.', ['count' => config('auth.passwords.create_password.expire')]))
             ->line(__('Este link de criação de senha irá expirar em 3 dias.'))

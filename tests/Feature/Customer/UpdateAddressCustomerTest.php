@@ -20,7 +20,7 @@ beforeEach(function () {
         ->count(5)
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->customer()
+        ->customerRole()
         ->create([
             'password' => '12345678',
         ]);

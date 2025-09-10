@@ -27,6 +27,9 @@ class UpdateCustomerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'name_social' => ['nullable', 'string', 'max:255'],
+            'password' => ['nullable', 'confirmed', 'min:8'],
+            'password_current' => ['nullable'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers')->ignore($this->customer)],
             'cpf' => ['required', 'string', 'min:11', Rule::unique('customers')->ignore($this->customer)],
             'holder_id' => ['nullable', 'exists:customers,id'],

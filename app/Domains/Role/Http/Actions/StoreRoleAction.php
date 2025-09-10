@@ -11,7 +11,7 @@ class StoreRoleAction
     {
         $data['created_by'] = Auth::user()->name ?? null;
         $role = Role::create($data);
-        $role->attachPermissionsWithAudit($data['permissions']);
+        $role->auditAttach('permissions', $data['permissions']);
         return $role;
     }
 }

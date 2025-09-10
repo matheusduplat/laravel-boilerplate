@@ -17,7 +17,7 @@ use App\Domains\Role\Http\Resource\RoleComponentSelectResource;
 use App\Domains\Role\Http\Resource\RoleResource;
 use App\Domains\Role\Model\Role;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -104,7 +104,9 @@ class RoleController extends Controller
     public function store(StoreRoleRequest $request, StoreRoleAction $storeRoleAction)
     {
         $data = $request->validated();
-        $role = $storeRoleAction->execute($data);
+        DB::transaction(function () use ($data, $storeRoleAction) {
+            $role = $storeRoleAction->execute($data);
+        });
         return response()->json(['message' => __('Role created successfully.')]);
     }
 
@@ -122,7 +124,9 @@ class RoleController extends Controller
     public function update(UpdateRoleRequest $request, Role $role, UpdateRoleAction $updateRoleAction)
     {
         $data = $request->validated();
-        $role = $updateRoleAction->execute($data, $role);
+        DB::transaction(function () use ($data, $updateRoleAction, $role) {
+            $role = $updateRoleAction->execute($data, $role);
+        });
         return response()->json(['message' => __('Role updated successfully.')]);
     }
 
@@ -139,7 +143,9 @@ class RoleController extends Controller
      */
     public function destroy(DeleteRoleRequest $request, Role $role, DeleteRoleAction $deleteRoleAction)
     {
-        $role = $deleteRoleAction->execute($role);
+        DB::transaction(function () use ($role, $deleteRoleAction) {
+            $role = $deleteRoleAction->execute($role);
+        });
         return response()->json(['message' => __('Role deleted successfully.')]);
     }
 
@@ -156,7 +162,9 @@ class RoleController extends Controller
      */
     public function restore(DeleteRoleRequest $request, Role $role, RestoreRoleAction $restoreRoleAction)
     {
-        $role = $restoreRoleAction->execute($role);
+        DB::transaction(function () use ($role, $restoreRoleAction) {
+            $role = $restoreRoleAction->execute($role);
+        });
         return response()->json(['message' => __('Role restored successfully.')]);
     }
 }

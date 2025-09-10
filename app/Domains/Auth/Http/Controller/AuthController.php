@@ -45,27 +45,6 @@ class AuthController extends Controller
     }
 
     /**
-     * login cliente
-     * 
-     * Efetua o login do usuário cliente
-     * 
-     * @unauthenticated
-     * 
-    
-     */
-    #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
-    public function loginCustomer(LoginCustomerRequest $request, LoginCustomerAction $loginCustomerAction)
-    {
-        $data = $request->validated();
-        $data += [
-            'ip' => $request->ip(),
-            'User-Agent' => $request->header('User-Agent'),
-            'X-Device-Token' => $request->header('X-Device-Token'),
-        ];
-        return $loginCustomerAction->execute($data);
-    }
-
-    /**
      *
      * logout
      *
@@ -77,7 +56,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'logged out']);
+        return response()->json(['message' => __('logged out')]);
     }
 
 
@@ -109,7 +88,7 @@ class AuthController extends Controller
      * @unauthenticated
      */
     #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
-    public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction, LoginCustomerAction $loginCustomerAction)
+    public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction)
     {
 
         $data = $request->validated();
@@ -117,7 +96,7 @@ class AuthController extends Controller
         $code = $data['code'];
         $deviceToken = $request->header('X-Device-Token');
 
-        return DB::transaction(function () use ($email, $code, $deviceToken, $request, $loginAction, $trustedDeviceAction, $loginCustomerAction) {
+        return DB::transaction(function () use ($email, $code, $deviceToken, $request, $loginAction, $trustedDeviceAction) {
 
             $verification = CodeVerification::where('email', $email)
                 ->where('code', $code)
@@ -125,16 +104,12 @@ class AuthController extends Controller
                 ->first();
 
             if (!$verification) {
-                return response()->json(['message' => __('Code invalid or expired')], 401);
+                return response()->json(['message' => __('Code invalid or expired.')], 401);
             }
 
 
-            if ($verification->guard == 'sanctum') {
-                $user = User::where('email', $email)->firstOrFail();
-            }
-            if ($verification->guard == 'customer') {
-                $user = Customer::where('email', $email)->firstOrFail();
-            }
+            $user = User::where('email', $email)->firstOrFail();
+
 
 
             $verification->delete();
@@ -147,11 +122,8 @@ class AuthController extends Controller
                 $user->markEmailAsVerified();
             }
 
-            if ($verification->guard == 'sanctum') {
-                return $loginAction->authenticate($user);
-            }
 
-            return $loginCustomerAction->authenticate($user);
+            return $loginAction->authenticate($user);
         });
     }
 
@@ -173,12 +145,12 @@ class AuthController extends Controller
     {
         $user = User::find($user_id);
         if ($user->hasVerifiedEmail()) {
-            return response()->json("Email já verificado.", 200);
+            return response()->json(["message" => __("Email already verified.")], 200);
         }
 
         $user->sendEmailVerificationNotification();
 
-        return response()->json("Link de verificação de e-mail enviado");
+        return response()->json(["message" => __("Verification email sent.")]);
     }
 
     public function verifyMailCustomer($customer_id, Request $request)
@@ -199,11 +171,11 @@ class AuthController extends Controller
     {
         $user = Customer::findOrFail($customer_id);
         if ($user->hasVerifiedEmail()) {
-            return response()->json("Email já verificado.", 200);
+            return response()->json(["message" => __("Email already verified.")], 200);
         }
 
         $user->sendEmailVerificationNotification();
 
-        return response()->json("Link de verificação de e-mail enviado");
+        return response()->json(["message" => __("Verification email sent.")]);
     }
 }

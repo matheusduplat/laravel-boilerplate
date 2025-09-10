@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Bill\Jobs\NotificationBillJob;
 use Illuminate\Support\Facades\Schedule;
 
 

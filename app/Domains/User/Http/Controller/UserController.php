@@ -34,12 +34,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $user = User::create($request->all());
-        $user->assignRoles(['1']);
-        return response()->json($user);
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
@@ -80,7 +75,7 @@ class UserController extends Controller
 
         return $status === Password::PASSWORD_RESET
             ? response()->json(['message' => __('Password created successfully.')])
-            : response()->json(['message' => __($status, ['type' => "criação"])], 400);
+            : response()->json(['message' => __($status, ['type' => __("creation")])], 400);
     }
     public function resendCreatePassword(User $user)
     {
@@ -92,7 +87,7 @@ class UserController extends Controller
             }
         );
         return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => __($status, ['type' => "criar"])])
-            : response()->json(['message' => __($status, ['type' => "criação"])], 400);
+            ? response()->json(['message' => __($status, ['type' => __("create")])])
+            : response()->json(['message' => __($status, ['type' => __("creation")])], 400);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'auth.'], function () {
@@ -23,6 +24,6 @@ Route::group(['as' => 'customer.', 'prefix' => 'customer'], function () {
     include __DIR__ . '/route/customer.php';
 });
 
-Route::group(['as' => 'bill.', 'prefix' => 'bill'], function () {
-    include __DIR__ . '/route/bill.php';
+Route::group(['as' => 'notifications.', 'prefix' => 'notifications'], function () {
+    include __DIR__ . '/route/notifications.php';
 });

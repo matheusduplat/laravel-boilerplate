@@ -24,7 +24,7 @@ describe('Resete de senha', function () {
         ])
             ->assertStatus(200)
             ->assertJson([
-                'message' => trans(Password::RESET_LINK_SENT, ['type' => "criar"]),
+                'message' => trans(Password::RESET_LINK_SENT, ['type' => __("reset")]),
             ]);
 
         Notification::assertSentTo($user, ResetPasswordNotification::class);

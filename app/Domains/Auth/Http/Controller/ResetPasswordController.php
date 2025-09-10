@@ -30,7 +30,7 @@ class ResetPasswordController extends Controller
             return response()->json(['message' => __($status)]);
         }
 
-        return response()->json(['message' => __($status, ['type' => "redefinição"])], 400);
+        return response()->json(['message' => __($status, ['type' => __("redefinition")])], 400);
     }
     public function resetCustomer(ResetPasswordRequest $request)
     {
@@ -51,6 +51,6 @@ class ResetPasswordController extends Controller
             return response()->json(['message' => __($status)]);
         }
 
-        return response()->json(['message' => __($status, ['type' => "redefinição"])], 400);
+        return response()->json(['message' => __($status, ['type' => __("redefinition")])], 400);
     }
 }

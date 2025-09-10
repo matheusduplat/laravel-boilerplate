@@ -7,7 +7,6 @@
 
     <livewire:pulse.usage type="jobs" cols="4" />
 
-    <livewire:pulse.servers cols="full" />
 
     <livewire:pulse.usage cols="4" rows="2" />
 

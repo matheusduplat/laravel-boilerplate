@@ -7,12 +7,14 @@ use App\Domains\Employee\Http\Actions\EmployeeAction;
 use App\Domains\Employee\Http\Actions\RestoreEmployeeAction;
 use App\Domains\Employee\Http\Actions\StoreEmployeeAction;
 use App\Domains\Employee\Http\Actions\UpdateEmployeeAction;
+use App\Domains\Employee\Http\Requests\ComponentSelectEmployeeRequest;
 use App\Domains\Employee\Http\Requests\DeleteEmployeeRequest;
 use App\Domains\Employee\Http\Requests\EmployeeRequest;
 use App\Domains\Employee\Http\Requests\PerfilEmployeeRequest;
 use App\Domains\Employee\Http\Requests\ShowEmployeeRequest;
 use App\Domains\Employee\Http\Requests\StoreEmployeeRequest;
 use App\Domains\Employee\Http\Requests\UpdateEmployeeRequest;
+use App\Domains\Employee\Http\Resources\ComponentSelectEmployeeResource;
 use App\Domains\Employee\Http\Resources\EmployeeResource;
 use App\Domains\Employee\Model\Employee;
 use App\Domains\Employee\Requests\RestoreEmployeeRequest;
@@ -65,9 +67,8 @@ class EmployeeController extends Controller
         $data = $request->validated();
 
         $employee =  DB::transaction(function () use ($data, $storeUserAction, $storeEmployeeAction, $storePhoneAction) {
-            $user = $storeUserAction->execute($data);
-            $data['user_id'] = $user->id;
             $employee = $storeEmployeeAction->execute($data);
+            $user = $storeUserAction->execute($data, $employee);
             $storePhoneAction->execute($data['phones'], $employee);
             return $employee;
         });
@@ -82,7 +83,7 @@ class EmployeeController extends Controller
      */
     public function show(ShowEmployeeRequest $request, Employee $employee)
     {
-        $employee->relationLoadWithTrashed();
+        // $employee->relationLoadWithTrashed();
         $employee = new EmployeeResource($employee);
         return response()->json($employee);
     }
@@ -187,5 +188,12 @@ class EmployeeController extends Controller
             $restorePhoneAction->execute($employee->phones);
         });
         return response()->json(['message' => __('Employee restored successfully.')], 201);
+    }
+    public function componentSelect(ComponentSelectEmployeeRequest $request, EmployeeAction $employeeAction)
+    {
+        $data = $request->validated();
+        $employees = $employeeAction->query($data, true);
+        $employees = new ComponentSelectEmployeeResource($employees);
+        return response()->json($employees);
     }
 }

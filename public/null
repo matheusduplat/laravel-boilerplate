@@ -1,0 +1,15 @@
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\IncomeReport\Jobs\NotificationIncomeReportJob::dispatch();
+App\Domains\IncomeReport\Jobs\NotificationIncomeReportJob::dispatch();

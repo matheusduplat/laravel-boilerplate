@@ -27,6 +27,7 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'name_social' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:customers'],
             'cpf' => ['required', 'string', 'min:11', 'unique:customers'],
             'phones' => ['required', 'array', 'min:1'],
