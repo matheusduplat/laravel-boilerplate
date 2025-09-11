@@ -2,6 +2,7 @@
 
 use App\Domains\Address\Model\Address;
 use App\Domains\Customer\Model\Customer;
+use App\Domains\Employee\Model\Employee;
 use App\Domains\Phone\Enums\PhoneType;
 use App\Domains\Phone\Model\Phone;
 use App\Domains\Role\Model\Role;
@@ -15,15 +16,12 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-
     Customer::factory()
         ->count(5)
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->customerRole()
-        ->create([
-            'password' => '12345678',
-        ]);
+        ->has(User::factory()->customer(), 'user')
+        ->create();
     // $this->withoutExceptionHandling();
 });
 
@@ -77,19 +75,14 @@ describe('Update Address Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
+        $user =  User::factory()->for(Customer::factory(), 'userable')->create();
 
         Sanctum::actingAs(
             $user,
             ['*']
         );
 
-        $customer = Customer::with(['phones', 'address'])->orderBy('id', 'desc')->first();
+        $customer = $user->userable;
         $response = $this->postJson("api/customer/update/address/{$customer->id}", []);
         $response->assertStatus(403)->assertJson([
             'message' => __('This action is unauthorized.'),
@@ -99,9 +92,8 @@ describe('Update Address Customer', function () {
     it('Atualizar um cliente com sucesso sendo customer', function () {
         $customer = Customer::with(['address'])->orderBy('id', 'desc')->get()->first();
         Sanctum::actingAs(
-            $customer,
+            $customer->user,
             ['*'],
-            'customer'
         );
 
         $this->data = [
@@ -120,10 +112,10 @@ describe('Update Address Customer', function () {
     });
 
     it('Erro ao atualizar um endereço que não pertence ao cliente autenticado', function () {
+        $customer = Customer::query()->first();
         Sanctum::actingAs(
-            Customer::query()->first(),
+            $customer->user,
             ['*'],
-            'customer'
         );
 
         $customer = Customer::with(['address'])->orderBy('id', 'desc')->get()->first();

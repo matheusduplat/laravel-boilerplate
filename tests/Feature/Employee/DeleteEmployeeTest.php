@@ -10,20 +10,9 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-    $role = Role::query()->where('name', 'Administrador')->first();
 
-    $this->data = [
-        'name' => fake()->name(),
-        'email' => fake()->email(),
-        'role' => $role->id,
-        'phones' => Phone::factory()->count(1)->make()->toArray(),
-    ];
-
-    $user = User::factory()->create();
-
-    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create([
-        'user_id' => $user->id
-    ]);
+    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create();
+    User::factory()->for($employee, 'userable')->create();
 });
 
 
@@ -35,7 +24,7 @@ describe('Delete Employee', function () {
             ['*']
         );
 
-        $employee = Employee::query()->orderBy('id', 'desc')->first();
+        $employee = Employee::query()->with(['user'])->orderBy('id', 'desc')->first();
 
 
         $response = $this->deleteJson('api/employee/destroy/' . $employee->id);
@@ -43,7 +32,7 @@ describe('Delete Employee', function () {
             'message' => __('Employee deleted successfully.'),
         ]);
         $this->assertSoftDeleted('users', [
-            'id' => $employee->user_id
+            'id' => $employee->user->id
         ]);
         $this->assertSoftDeleted('employees', [
             'id' => $employee->id
@@ -66,12 +55,7 @@ describe('Delete Employee', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
+        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
 
         Sanctum::actingAs(
             $user,
@@ -80,7 +64,7 @@ describe('Delete Employee', function () {
 
         $employee = Employee::query()->first();
 
-        $response = $this->deleteJson('api/employee/destroy/' . $employee->id, $this->data);
+        $response = $this->deleteJson('api/employee/destroy/' . $employee->id);
         $response->assertStatus(403)->assertJson([
             'message' => __('This action is unauthorized.'),
         ]);
@@ -94,7 +78,7 @@ describe('Delete Employee', function () {
         );
 
 
-        $response = $this->deleteJson('api/employee/destroy/66', $this->data);
+        $response = $this->deleteJson('api/employee/destroy/66');
         $response->assertStatus(404)->assertJson([
             'message' => 'O registro de Employee com ID(s) 66 não foi encontrado.',
         ]);

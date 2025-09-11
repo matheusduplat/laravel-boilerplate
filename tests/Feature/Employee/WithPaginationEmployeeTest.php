@@ -10,17 +10,16 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-    User::factory()
-        ->count(5) // cria 5 usuários
+    $employee = Employee::factory()
         ->has(
-            Employee::factory()
-                ->has(
-                    Phone::factory()->count(2), // 1 phone por employee
-                    'phones'
-                ),
-            'employee' // nome da relação no User (hasOne)
+            Phone::factory()->count(2), // 1 phone por employee
+            'phones'
         )
-        ->administrador()
+        ->has(
+            User::factory(), // 1 user por employee
+            'user'
+        )
+        ->count(5)
         ->create();
 });
 
@@ -52,12 +51,7 @@ describe('With Pagination Employee', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
+        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
 
         Sanctum::actingAs(
             $user,

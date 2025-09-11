@@ -10,10 +10,8 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-    $user = User::factory()->create();
-    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create([
-        'user_id' => $user->id
-    ]);
+    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create();
+    User::factory()->for($employee, 'userable')->create();
     // $this->withoutExceptionHandling();
 });
 
@@ -32,7 +30,7 @@ describe('Restore Employee', function () {
         expect($employee->fresh()->trashed())->toBeTrue();
 
 
-        $response = $this->getJson('api/employee/restore/' . $employee->id);
+        $response = $this->putJson('api/employee/restore/' . $employee->id);
         $response->assertStatus(201)->assertJson([
             'message' => __('Employee restored successfully.'),
         ]);
@@ -50,19 +48,14 @@ describe('Restore Employee', function () {
         $employee = Employee::query()->first();
 
 
-        $response = $this->getJson('api/employee/restore/' . $employee->id);
+        $response = $this->putJson('api/employee/restore/' . $employee->id);
         $response->assertStatus(403)->assertJson([
             'message' => 'Unauthenticated.',
         ]);
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
+        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
 
         Sanctum::actingAs(
             $user,
@@ -71,7 +64,7 @@ describe('Restore Employee', function () {
 
         $employee = Employee::query()->first();
 
-        $response = $this->getJson('api/employee/restore/' . $employee->id);
+        $response = $this->putJson('api/employee/restore/' . $employee->id);
         $response->assertStatus(403)->assertJson([
             'message' => __('This action is unauthorized.'),
         ]);
@@ -85,7 +78,7 @@ describe('Restore Employee', function () {
         );
 
 
-        $response = $this->getJson('api/employee/restore/66');
+        $response = $this->putJson('api/employee/restore/66');
         $response->assertStatus(404)->assertJson([
             'message' => 'O registro de Employee com ID(s) 66 não foi encontrado.',
         ]);

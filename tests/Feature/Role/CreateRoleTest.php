@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Employee\Model\Employee;
 use App\Domains\Permission\Model\Permission;
 use App\Domains\User\Model\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -66,12 +67,7 @@ describe('Create Role', function () {
     });
 
     it('Usuário sem permissão', function () use ($url) {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
+        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
 
         Sanctum::actingAs(
             $user,

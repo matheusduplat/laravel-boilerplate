@@ -11,15 +11,12 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-
     Customer::factory()
         ->count(5)
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->customerRole()
-        ->create([
-            'password' => '12345678',
-        ]);
+        ->has(User::factory()->customer(), 'user')
+        ->create();
     // $this->withoutExceptionHandling();
 });
 
@@ -37,6 +34,7 @@ describe('Update Phones Customer', function () {
             ...$customer->toArray(),
             'name' => fake()->name(),
             'birth_date' => fake()->date(),
+            'email' => $customer->user->email
         ];
 
 
@@ -73,18 +71,11 @@ describe('Update Phones Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::Create([
-            'name' => fake()->name(),
-            'email' => fake()->email(),
-            'password' => 'password',
-            'email_verified_at' => now(),
-        ]);
-
+        $user =  User::factory()->for(Customer::factory(), 'userable')->create();
         Sanctum::actingAs(
             $user,
             ['*']
         );
-
         $customer = Customer::with(['phones', 'address'])->orderBy('id', 'desc')->first();
         $response = $this->postJson("api/customer/update/profile/{$customer->id}", []);
         $response->assertStatus(403)->assertJson([
@@ -93,17 +84,17 @@ describe('Update Phones Customer', function () {
     });
 
     it('Atualizar perfil do cliente com sucesso sendo customer', function () {
-        $customer = Customer::orderBy('id', 'desc')->get()->first();
+        $customer = Customer::with(['address'])->orderBy('id', 'desc')->get()->first();
         Sanctum::actingAs(
-            $customer,
+            $customer->user,
             ['*'],
-            'customer'
         );
 
         $this->data = [
             ...$customer->toArray(),
             'name' => fake()->name(),
             'birth_date' => fake()->date(),
+            'email' => $customer->user->email
         ];
 
         $response = $this->postJson("api/customer/update/profile/{$customer->id}", $this->data);
@@ -118,10 +109,10 @@ describe('Update Phones Customer', function () {
     });
 
     it('Erro ao atualizar  perfil que não pertence ao cliente autenticado', function () {
+        $customer = Customer::query()->first();
         Sanctum::actingAs(
-            Customer::query()->first(),
+            $customer->user,
             ['*'],
-            'customer'
         );
 
         $customer = Customer::orderBy('id', 'desc')->get()->first();
