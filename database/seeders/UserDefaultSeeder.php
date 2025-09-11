@@ -68,7 +68,7 @@ class UserDefaultSeeder extends Seeder
                 'email' => 'customer@email.com.br',
             ],
             [
-                'name' => 'Administrador',
+                'name' => 'Customer',
                 'password' => 'admin',
                 'email_verified_at' => now(),
                 'secure_login_email' => false,

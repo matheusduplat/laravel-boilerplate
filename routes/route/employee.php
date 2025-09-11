@@ -13,5 +13,5 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/update/{employee}', [EmployeeController::class, 'update'])->name('update');
     Route::delete('/destroy/{employee}', [EmployeeController::class, 'destroy'])->name('destroy');
     Route::post('/perfil/{employee}', [EmployeeController::class, 'perfil'])->name('perfil');
-    Route::get('restore/{employee}', [EmployeeController::class, 'restore'])->name('restore');
+    Route::put('restore/{employee}', [EmployeeController::class, 'restore'])->name('restore');
 });

@@ -25,16 +25,13 @@ class UpdateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = $this->customer->user->id;
         return [
             'name' => ['required', 'string', 'max:255'],
             'name_social' => ['nullable', 'string', 'max:255'],
-            'password' => ['nullable', 'confirmed', 'min:8'],
-            'password_current' => ['nullable'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers')->ignore($this->customer)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
             'cpf' => ['required', 'string', 'min:11', Rule::unique('customers')->ignore($this->customer)],
-            'holder_id' => ['nullable', 'exists:customers,id'],
             'birth_date' => ['required', 'date_format:Y-m-d',],
-            'first_access' => ['nullable', 'boolean'],
             'phones' => ['required', 'array', 'min:1'],
             'phones.*.id' => ['nullable', 'exists:phones,id'],
             'phones.*.number' => ['required', 'string', 'max:255'],

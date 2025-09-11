@@ -2,6 +2,7 @@
 
 namespace App\Domains\Employee\Policy;
 
+use App\Domains\Employee\Model\Employee;
 use App\Domains\User\Model\User;
 
 class EmployeePolicy
@@ -38,8 +39,9 @@ class EmployeePolicy
     {
         return $user->hasAnyPermission(['admin.employee.delete']);
     }
-    public function perfil(User $user)
+    public function perfil(User $user, Employee $employee)
     {
+
         return $user->hasAnyPermission(['admin.profile.read']);
     }
     public function componentSelect(User $user)

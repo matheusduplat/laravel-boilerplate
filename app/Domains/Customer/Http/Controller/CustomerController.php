@@ -31,6 +31,7 @@ use App\Domains\Phone\Http\Actions\RestorePhoneAction;
 use App\Domains\Phone\Http\Actions\StorePhoneAction;
 use App\Domains\Phone\Http\Actions\UpdatePhoneAction;
 use App\Domains\User\Http\Actions\StoreUserAction;
+use App\Domains\User\Http\Actions\UpdatePasswordUserAction;
 use App\Domains\User\Http\Actions\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Notifications\CreatePasswordNotification;
@@ -261,19 +262,18 @@ class CustomerController extends Controller
         });
         return response()->json(['message' => __('Perfil updated successfully.')], 201);
     }
-    public function updatePassword(UpdatePasswordCustomerRequest $request, Customer $customer, UpdateCustomerAction $updateCustomerAction)
+    public function updatePassword(UpdatePasswordCustomerRequest $request, Customer $customer, UpdatePasswordUserAction $updatePasswordUserAction)
     {
         $data = $request->validated();
-        DB::transaction(function () use ($data, $customer, $updateCustomerAction) {
+        DB::transaction(function () use ($data, $customer, $updatePasswordUserAction) {
 
-            if (isset($data['password_current']) && !Hash::check($data['password_current'], $customer->password)) {
+            if (isset($data['password_current']) && !Hash::check($data['password_current'], $customer->user->password)) {
                 throw ValidationException::withMessages([
                     'password_current' => [__('The current password is different from the one provided')],
                 ]);
             }
 
-
-            $updateCustomerAction->execute($data, $customer);
+            $updatePasswordUserAction->execute($customer->user, $data);
         });
         return response()->json(['message' => __('Password updated successfully.')], 201);
     }
