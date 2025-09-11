@@ -6,14 +6,13 @@ use App\Domains\Phone\Model\Phone;
 use App\Domains\User\Model\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait EmployeeRelationship
 {
 
-    public function user(): MorphOne
+    public function user(): BelongsTo
     {
-        return $this->morphOne(User::class, 'userable');
+        return $this->belongsTo(User::class);
     }
     public function userWithTrashed(): BelongsTo
     {

@@ -15,9 +15,25 @@ class StoreCustomerAction
         $customer = Customer::create([
             ...$data,
             'created_by' => Auth::user()->name ?? null,
+            'first_access' => true,
             'status' => CustomerStatus::ACTIVE,
+            'password' => $data['password'] ?? $this->generatePasswordByCpf($data['cpf']),
         ]);
 
+        if (isset($data['email'])) {
+            $customer->sendEmailVerificationNotification();
+        }
+
+        $roles = Role::firstWhere('name', RoleDefaults::CLIENT)?->id;
+
+        $customer->auditAttach('roles', $roles);
+
         return $customer;
+    }
+
+    protected function generatePasswordByCpf(string $cpf): string
+    {
+        $cpf = str_replace(['.', '-', '_'], '', $cpf);
+        return substr($cpf, 0, 6);
     }
 }

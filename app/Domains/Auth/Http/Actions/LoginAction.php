@@ -23,6 +23,7 @@ class LoginAction
         if (! Hash::check($data['password'], $user->password)) {
             return response()->json(['message' => __('Invalid password.')], 403);
         }
+
         if (!$user->hasVerifiedEmail()) {
             return response()->json(['message' => __('Email not verified.'), 'user' => $user], 403);
         }

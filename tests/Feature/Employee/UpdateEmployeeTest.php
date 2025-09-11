@@ -19,8 +19,11 @@ beforeEach(function () {
         'phones' => Phone::factory()->count(1)->make()->toArray(),
     ];
 
-    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create();
-    User::factory()->for($employee, 'userable')->create();
+    $user = User::factory()->create();
+
+    $employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create([
+        'user_id' => $user->id
+    ]);
 });
 
 
@@ -41,10 +44,11 @@ describe('Update Employee', function () {
         ]);
         $this->assertDatabaseHas('users', [
             'email' => $this->data['email'],
+            'id' => $employee->user_id
         ]);
         $this->assertDatabaseHas('employees', [
             'name' => $this->data['name'],
-            'id' => $employee->id
+            'user_id' => $employee->user_id
         ]);
         $this->assertDatabaseHas('phones', [
             'number' => $this->data['phones'][0]['number'],
@@ -82,7 +86,12 @@ describe('Update Employee', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,

@@ -16,8 +16,9 @@ beforeEach(function () {
         ->count(5)
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->has(User::factory()->customer(), 'user')
-        ->create();
+        ->create([
+            'password' => '12345678',
+        ]);
 });
 
 
@@ -39,7 +40,12 @@ describe('Get All Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,

@@ -25,7 +25,7 @@ class PerfilEmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->employee->user->id;
+        $userId = $this->employee->user_id;
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],

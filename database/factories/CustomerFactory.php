@@ -25,9 +25,22 @@ class CustomerFactory extends Factory
         return [
             'name' => fake()->name(),
             'name_social' => fake()->name(),
+            'email' => fake()->email(),
             'cpf' => fake()->cpf(),
             'birth_date' => fake()->date('Y-m-d'),
             'status' => CustomerStatus::ACTIVE,
+            'email_verified_at' => now(),
+            'password' => 'password',
         ];
+    }
+    public function customerRole()
+    {
+        return $this->afterCreating(function (Customer $customer) {
+            // Cria papel Administrador caso não exista
+            $adminRole = Role::firstOrCreate(['name' => RoleDefaults::CLIENT]);
+
+            // Atribui o papel ao usuário
+            $customer->assignRole($adminRole);
+        });
     }
 }

@@ -27,7 +27,7 @@ class CustomerAction
             if ($data['with_trashed']) {
                 $customers->withTrashed()->relationWithTrashed();
             } else {
-                $customers->with(['phones', 'address.stateable']);
+                $customers->with(['holder', 'phones', 'address.stateable']);
             }
         }
 

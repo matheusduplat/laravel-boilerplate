@@ -16,7 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_social')->nullable();
             $table->string('cpf')->unique();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
             $table->date('birth_date');
+            $table->boolean('secure_login_email')->default(false);
+            $table->foreignId('holder_id')->nullable()->constrained('customers');
+            $table->boolean('first_access')->default(true);
             $table->string('status');
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();

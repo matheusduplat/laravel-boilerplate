@@ -12,10 +12,11 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
     Customer::factory()
-        ->has(Phone::factory()->count(2), 'phones')
+        ->has(Phone::factory()->count(1), 'phones')
         ->has(Address::factory(), 'address')
-        ->has(User::factory()->customer(), 'user')
-        ->create();
+        ->create([
+            'password' => '12345678',
+        ]);
     // $this->withoutExceptionHandling();
 });
 
@@ -44,7 +45,7 @@ describe('Restore Customer', function () {
         expect($customer->address)->not()->toBeNull();
 
         // Garantir que phones ainda existem
-        expect($customer->phones)->toHaveCount(2);
+        expect($customer->phones)->toHaveCount(1);
     });
 
     it('Usuário não autenticado', function () {
@@ -59,7 +60,12 @@ describe('Restore Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,

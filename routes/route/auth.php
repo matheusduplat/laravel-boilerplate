@@ -21,7 +21,20 @@ Route::post('/create-password', [UserController::class, 'createPassword'])->name
 
 Route::get('resend-create-password/{user}', [UserController::class, 'resendCreatePassword'])->name('resend.create.password');
 
-Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+Route::group(['middleware' => ['auth:sanctum,customer', 'verified']], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/me', [AuthController::class, 'me'])->name('me');
+});
+
+
+Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
+    Route::post('login', [AuthController::class, 'loginCustomer'])->name('login-customer');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmailCustomer']);
+    Route::post('/reset-password', [ResetPasswordController::class, 'resetCustomer']);
+
+    Route::get('mail/verify/{customer_id}', [AuthController::class, 'verifyMailCustomer'])->name('verification.verify');
+    Route::get('mail/resend/{customer_id}', [AuthController::class, 'mailResendCustomer'])->name('verification.resend');
+
+    Route::post('/create-password', [CustomerController::class, 'createPassword'])->name('create.password');
+    Route::get('resend-create-password/{customer}', [CustomerController::class, 'resendCreatePassword'])->name('resend.create.password');
 });

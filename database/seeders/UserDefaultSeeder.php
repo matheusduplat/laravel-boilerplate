@@ -23,17 +23,7 @@ class UserDefaultSeeder extends Seeder
          * Created Employee
          * 
          */
-
-
-        $employee = Employee::updateOrCreate(
-            [
-                'name' => "Administrador",
-            ],
-            [
-                "status" => EmployeeStatus::ACTIVE
-            ]
-        );
-        $user =  $employee->user()->updateOrCreate(
+        $user = User::updateOrCreate(
             [
                 'email' => 'admin@email.com.br',
             ],
@@ -41,13 +31,23 @@ class UserDefaultSeeder extends Seeder
                 'name' => 'Administrador',
                 'password' => 'admin',
                 'email_verified_at' => now(),
-                'secure_login_email' => false,
-                'first_access' => false,
+                'secure_login_email' => false
+
             ]
         );
-        $roles = Role::query()->where('name', RoleDefaults::ADMIN)->get()->pluck('id')->toArray();
+        $roles = Role::query()->whereIn('name', ['Administrador', 'Customer'])->get()->pluck('id')->toArray();
 
         $user->auditAttach('roles', $roles);
+
+        Employee::updateOrCreate(
+            [
+                'user_id' => $user->id,
+            ],
+            [
+                'name' => "Administrador",
+                "status" => EmployeeStatus::ACTIVE
+            ]
+        );
 
         /**
          * Created Customer
@@ -55,27 +55,19 @@ class UserDefaultSeeder extends Seeder
          */
         $customer = Customer::updateOrCreate(
             [
-                "cpf" => "123.456.789-00",
+                'email' => 'customer@email.com.br',
             ],
             [
                 'name' => fake()->name(),
+                'password' => 'customer',
+                'email_verified_at' => now(),
+                'secure_login_email' => false,
+                "cpf" => "123.456.789-00",
                 "birth_date" => "2000-01-01",
                 'status' => CustomerStatus::ACTIVE
             ]
         );
-        $userCustomer =  $customer->user()->updateOrCreate(
-            [
-                'email' => 'customer@email.com.br',
-            ],
-            [
-                'name' => 'Customer',
-                'password' => 'admin',
-                'email_verified_at' => now(),
-                'secure_login_email' => false,
-                'first_access' => false,
-            ]
-        );
         $roles = Role::query()->where('name', RoleDefaults::CLIENT)->get()->pluck('id')->toArray();
-        $userCustomer->auditAttach('roles', $roles);
+        $customer->auditAttach('roles', $roles);
     }
 }

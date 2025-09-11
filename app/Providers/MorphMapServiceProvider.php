@@ -48,6 +48,15 @@ class MorphMapServiceProvider extends ServiceProvider
             "CodeVerification" => CodeVerification::class,
             "Permission" => Permission::class,
             "Address" => Address::class,
+            "Bill" => Bill::class,
+            "IncomeReport" => IncomeReport::class,
+            "Copaticipation" => Copaticipation::class,
+            'DigitalWallet' => DigitalWallet::class,
+            "AccreditedNetworks" => AccreditedNetworks::class,
+            "RequestManagement" => RequestManagement::class,
+            "RequestManagementResponse" => RequestManagementResponse::class,
+            "Contact" => Contact::class,
+            "ContactResponse" => ContactResponse::class
         ]);
     }
 }

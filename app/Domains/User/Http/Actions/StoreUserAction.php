@@ -2,8 +2,6 @@
 
 namespace App\Domains\User\Http\Actions;
 
-use App\Domains\Customer\Model\Customer;
-use App\Domains\Employee\Model\Employee;
 use App\Domains\Role\Enums\RoleDefaults;
 use App\Domains\Role\Model\Role;
 use App\Domains\User\Model\User;
@@ -15,20 +13,12 @@ use Illuminate\Validation\ValidationException;
 
 class StoreUserAction
 {
-
-    /**
-     * Cria um novo usuário
-     *  
-     * @param array $data
-     * 
-     * 
-     */
-    public function execute(array $data, Employee|Customer $model)
+    public function execute(array $data)
     {
         $data['created_by'] = Auth::user()->name ?? null;
         $data['name'] = $this->nameAndSurname($data['name']);
 
-        $user = $model->user()->create([
+        $user = User::create([
             ...$data,
             'password' => $data['password'] ?? 'Password@321'
         ]);

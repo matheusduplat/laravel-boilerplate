@@ -69,30 +69,30 @@ class CustomerPolicy
             'admin.customer.read'
         ]);
     }
-    public function updateAddress(User $user, Customer $customer)
+    public function updateAddress(User|Customer $user, Customer $customer)
     {
-        if ($user->userable->id !== $customer->id) {
+        if ($user instanceof Customer && $user->id !== $customer->id) {
             abort(403, __("You cannot edit another customer's address."));
         }
         return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);
     }
-    public function updatePhone(User $user, Customer $customer)
+    public function updatePhone(User|Customer $user, Customer $customer)
     {
-        if ($user->userable->id !== $customer->id) {
+        if ($user instanceof Customer && $user->id !== $customer->id) {
             abort(403, __("You cannot edit another customer's phones."));
         }
         return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);
     }
-    public function updatePerfil(User $user, Customer $customer)
+    public function updatePerfil(User|Customer $user, Customer $customer)
     {
-        if ($user->userable->id !== $customer->id) {
+        if ($user instanceof Customer && $user->id !== $customer->id) {
             abort(403, __("You cannot edit another customer's profile."));
         }
         return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);
     }
-    public function updatePassword(User $user, Customer $customer)
+    public function updatePassword(User|Customer $user, Customer $customer)
     {
-        if ($user->userable->id !== $customer->id) {
+        if ($user instanceof Customer && $user->id !== $customer->id) {
             abort(403, __("You cannot edit another customer's password."));
         }
         return $user->hasAnyRole([RoleDefaults::CLIENT]) || $user->hasAnyPermission(['admin.customer.update']);

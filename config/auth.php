@@ -51,10 +51,10 @@ return [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],
-        // 'customer' => [
-        //     'driver' => 'sanctum',
-        //     'provider' => 'customers',
-        // ],
+        'customer' => [
+            'driver' => 'sanctum',
+            'provider' => 'customers',
+        ],
     ],
 
     /*
@@ -79,10 +79,10 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
         ],
-        // 'customers' => [
-        //     'driver' => 'eloquent',
-        //     'model' => Customer::class,
-        // ],
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => Customer::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -121,18 +121,18 @@ return [
             'expire' => 4320, // 3 dias
             'throttle' => 60,
         ],
-        // 'customer' => [
-        //     'provider' => 'customers',
-        //     'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-        //     'expire' => 60 * 5,
-        //     'throttle' => 60,
-        // ],
-        // 'create_password_customer' => [
-        //     'provider' => 'customers',
-        //     'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-        //     'expire' => 4320, // 3 dias
-        //     'throttle' => 60,
-        // ],
+        'customer' => [
+            'provider' => 'customers',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60 * 5,
+            'throttle' => 60,
+        ],
+        'create_password_customer' => [
+            'provider' => 'customers',
+            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 4320, // 3 dias
+            'throttle' => 60,
+        ],
     ],
 
     /*

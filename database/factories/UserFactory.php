@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Domains\Role\Enums\RoleDefaults;
 use App\Domains\Role\Model\Role;
 use App\Domains\User\Model\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -50,20 +49,10 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             // Cria papel Administrador caso não exista
-            $adminRole = Role::firstOrCreate(['name' => RoleDefaults::ADMIN]);
+            $adminRole = Role::firstOrCreate(['name' => 'Administrador']);
 
             // Atribui o papel ao usuário
             $user->assignRole($adminRole);
-        });
-    }
-    public function customer()
-    {
-        return $this->afterCreating(function (User $user) {
-            // Cria papel Administrador caso não exista
-            $role = Role::firstOrCreate(['name' => RoleDefaults::CLIENT]);
-
-            // Atribui o papel ao usuário
-            $user->assignRole($role);
         });
     }
 }

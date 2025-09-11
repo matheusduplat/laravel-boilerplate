@@ -24,6 +24,8 @@ class CreateCustomerMocksSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+
+            $base64 = file_get_contents(public_path('fake/pdf_base64.txt'));
             $customers =  Customer::factory()
                 ->count(200)
                 ->has(Phone::factory()->count(2), 'phones')
@@ -32,10 +34,46 @@ class CreateCustomerMocksSeeder extends Seeder
                 ->create([
                     'password' => '12345678',
                 ]);
-            // $user = User::query()->first();
-            // $customers->random(5)->each(function ($customer) use ($base64, $user) {
+            $user = User::query()->first();
+            $customers->random(5)->each(function ($customer) use ($base64, $user) {
+                Bill::factory()
+                    ->count(2)
+                    ->for($customer, 'customer') // garante que customer_id seja preenchido
+                    ->create([
+                        'base64'     => $base64,
+                    ]);
+                IncomeReport::factory()
+                    ->count(2)
+                    ->for($customer, 'customer') // garante que customer_id seja preenchido
+                    ->create([
+                        'attachment' => $base64,
+                    ]);
+                Copaticipation::factory()
+                    ->count(2)
+                    ->for($customer, 'customer') // garante que customer_id seja preenchido
+                    ->create([
+                        'base64'     => $base64,
+                    ]);
 
-            // });
+                DigitalWallet::factory()
+                    ->count(1)
+                    ->for($customer, 'customer') // garante que customer_id seja preenchido 
+                    ->create();
+
+                RequestManagement::factory()
+                    ->count(3)
+                    ->for($customer, 'customer') // garante que customer_id seja preenchido
+                    ->has(
+                        RequestManagementResponse::factory()->count(3)->for($customer, "authorable"),
+                        'responses'
+                    )
+                    ->has(
+                        RequestManagementResponse::factory()->count(2)->for($user, "authorable"),
+                        'responses'
+                    )
+                    ->withRealFile()
+                    ->create();
+            });
         });
     }
 }

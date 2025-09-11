@@ -23,13 +23,14 @@ class UpdateProfileCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->customer->user->id;
         return [
             'name' => ['required', 'string', 'max:255'],
             'name_social' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customers')->ignore($this->customer)],
             'cpf' => ['required', 'string', 'min:11', Rule::unique('customers')->ignore($this->customer)],
             'birth_date' => ['required', 'date_format:Y-m-d',],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'first_access' => ['nullable', 'boolean'],
         ];
     }
 }

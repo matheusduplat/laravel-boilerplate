@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Domains\Role\Enums\RoleDefaults;
 use App\Domains\Role\Model\Role;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RolesDefaultSeeder extends Seeder
@@ -18,6 +19,7 @@ class RolesDefaultSeeder extends Seeder
         ]);
         Role::updateOrCreate([
             'name' => RoleDefaults::CLIENT,
+            'guard_name' => 'customer',
         ]);
     }
 }

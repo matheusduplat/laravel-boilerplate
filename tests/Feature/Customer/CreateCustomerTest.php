@@ -2,7 +2,6 @@
 
 use App\Domains\Address\Model\Address;
 use App\Domains\Customer\Model\Customer;
-use App\Domains\Employee\Model\Employee;
 use App\Domains\Phone\Model\Phone;
 use App\Domains\Role\Model\Role;
 use App\Domains\User\Model\User;
@@ -24,7 +23,6 @@ beforeEach(function () {
         'birth_date' => fake()->date(),
         'phones' => Phone::factory()->count(3)->make()->toArray(),
         'address' => $address,
-        "email" => fake()->email(),
     ];
 });
 
@@ -44,8 +42,6 @@ describe('Create Customer', function () {
         $this->assertDatabaseHas('customers', [
             'name' => $this->data['name'],
             'cpf' => $this->data['cpf'],
-        ]);
-        $this->assertDatabaseHas('users', [
             'email' => $this->data['email'],
         ]);
         $this->assertDatabaseHas('phones', [
@@ -81,7 +77,12 @@ describe('Create Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,
@@ -103,8 +104,6 @@ describe('Create Customer', function () {
             ['*']
         );
 
-
-
         $response = $this->postJson('api/customer/store', $this->data);
 
         // Mantendo todas as asserções existentes
@@ -115,8 +114,6 @@ describe('Create Customer', function () {
         $this->assertDatabaseHas('customers', [
             'name' => $this->data['name'],
             'cpf' => $this->data['cpf'],
-        ]);
-        $this->assertDatabaseHas('users', [
             'email' => $this->data['email'],
         ]);
         $this->assertDatabaseHas('phones', [
@@ -130,7 +127,7 @@ describe('Create Customer', function () {
         ]);
 
         // Nova asserção: verifica se a notificação de criação de senha foi enviada
-        $user = User::where('email', $this->data['email'])->first();
-        Notification::assertSentTo($user, CreatePasswordNotification::class);
+        $user = Customer::where('email', $this->data['email'])->first();
+        Notification::assertSentTo($user, VerifyMailNotification::class);
     });
 });

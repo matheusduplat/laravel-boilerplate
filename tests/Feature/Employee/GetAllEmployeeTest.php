@@ -10,16 +10,17 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
-    $employee = Employee::factory()
+    User::factory()
+        ->count(5) // cria 5 usuários
         ->has(
-            Phone::factory()->count(2), // 1 phone por employee
-            'phones'
+            Employee::factory()
+                ->has(
+                    Phone::factory()->count(2), // 1 phone por employee
+                    'phones'
+                ),
+            'employee' // nome da relação no User (hasOne)
         )
-        ->has(
-            User::factory(), // 1 user por employee
-            'user'
-        )
-        ->count(5)
+        ->administrador()
         ->create();
 });
 
@@ -42,7 +43,12 @@ describe('Get All Employee', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,

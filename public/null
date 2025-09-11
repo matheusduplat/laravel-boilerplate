@@ -1,3 +1,15 @@
-$employee = Employee::factory()->has(Phone::factory()->count(1), 'phones')->create();
-
- User::factory()->for($employee,'userable')->create();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\Bill\Jobs\NotificationBillJob::dispatch();
+App\Domains\IncomeReport\Jobs\NotificationIncomeReportJob::dispatch();
+App\Domains\IncomeReport\Jobs\NotificationIncomeReportJob::dispatch();

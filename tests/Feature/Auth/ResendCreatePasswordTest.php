@@ -1,6 +1,5 @@
 <?php
 
-use App\Domains\Customer\Model\Customer;
 use App\Domains\User\Model\User;
 use App\Notifications\CreatePasswordNotification;
 use Illuminate\Support\Facades\Notification;
@@ -14,7 +13,7 @@ describe('Resend Create Password', function () {
     it('reenvia convite para usuário existente', function () {
         Notification::fake();
 
-        $user = User::factory()->for(Customer::factory(), 'userable')->create();
+        $user = User::factory()->create();
         $response = $this->getJson('/api/resend-create-password/' . $user->id);
 
         $response->assertStatus(200)

@@ -2,7 +2,6 @@
 
 use App\Domains\Address\Model\Address;
 use App\Domains\Customer\Model\Customer;
-use App\Domains\Employee\Model\Employee;
 use App\Domains\Phone\Enums\PhoneType;
 use App\Domains\Phone\Model\Phone;
 use App\Domains\Role\Model\Role;
@@ -20,8 +19,9 @@ beforeEach(function () {
     Customer::factory()
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->has(User::factory()->customer(), 'user')
-        ->create();
+        ->create([
+            'password' => '12345678',
+        ]);
 });
 
 
@@ -39,7 +39,6 @@ describe('Update Customer', function () {
             ...$customer->toArray(),
             'name' => fake()->name(),
             'birth_date' => fake()->date(),
-            'email' => $customer->user->email,
             'phones' => [
                 [
                     'id' => $phones[0]['id'],
@@ -117,7 +116,12 @@ describe('Update Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,
@@ -132,9 +136,8 @@ describe('Update Customer', function () {
     });
 
     it('Atualizar um cliente com sucesso sendo customer', function () {
-        $user = User::where('userable_type', 'Customer')->first();
         Sanctum::actingAs(
-            $user,
+            Customer::query()->first(),
             ['*']
         );
         $customer = Customer::with(['phones', 'address'])->orderBy('id', 'desc')->first();
@@ -144,7 +147,6 @@ describe('Update Customer', function () {
             ...$customer->toArray(),
             'name' => fake()->name(),
             'birth_date' => fake()->date(),
-            'email' => $customer->user->email,
             'phones' => [
                 [
                     'id' => $phones[0]['id'],

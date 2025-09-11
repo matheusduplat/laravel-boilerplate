@@ -30,9 +30,6 @@ use App\Domains\Phone\Http\Actions\DeletePhoneAction;
 use App\Domains\Phone\Http\Actions\RestorePhoneAction;
 use App\Domains\Phone\Http\Actions\StorePhoneAction;
 use App\Domains\Phone\Http\Actions\UpdatePhoneAction;
-use App\Domains\User\Http\Actions\StoreUserAction;
-use App\Domains\User\Http\Actions\UpdatePasswordUserAction;
-use App\Domains\User\Http\Actions\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Notifications\CreatePasswordNotification;
 use Illuminate\Support\Facades\DB;
@@ -77,18 +74,12 @@ class CustomerController extends Controller
      * @param \App\Domains\Phone\Http\Actions\StorePhoneAction $storePhoneAction
      * @param \App\Domains\User\Http\Actions\StoreUserAction $storeUserAction
      */
-    public function store(
-        StoreCustomerRequest $request,
-        StoreCustomerAction $storeCustomerAction,
-        StorePhoneAction $storePhoneAction,
-        StoreAddressAction $storeAddressAction,
-        StoreUserAction $storeUserAction
-    ) {
+    public function store(StoreCustomerRequest $request, StoreCustomerAction $storeCustomerAction, StorePhoneAction $storePhoneAction, StoreAddressAction $storeAddressAction)
+    {
         $data = $request->validated();
 
-        DB::transaction(function () use ($data, $storeCustomerAction, $storePhoneAction, $storeAddressAction, $storeUserAction) {
+        DB::transaction(function () use ($data, $storeCustomerAction, $storePhoneAction, $storeAddressAction) {
             $customer = $storeCustomerAction->execute($data);
-            $storeUserAction->execute($data, $customer);
             $storePhoneAction->execute($data['phones'], $customer);
             if (isset($data['address'])) {
                 $storeAddressAction->execute($data['address'], $customer);
@@ -121,23 +112,12 @@ class CustomerController extends Controller
         StorePhoneAction $storePhoneAction,
         DeletePhoneAction $deletePhoneAction,
         UpdateAddressAction $updateAddressAction,
-        StoreAddressAction $storeAddressAction,
-        UpdateUserAction $updateUserAction
+        StoreAddressAction $storeAddressAction
     ) {
         $data = $request->validated();
-        DB::transaction(function () use (
-            $data,
-            $customer,
-            $updateCustomerAction,
-            $updatePhoneAction,
-            $storePhoneAction,
-            $deletePhoneAction,
-            $updateAddressAction,
-            $storeAddressAction,
-            $updateUserAction,
-        ) {
+        DB::transaction(function () use ($data, $customer, $updateCustomerAction, $updatePhoneAction, $storePhoneAction, $deletePhoneAction, $updateAddressAction, $storeAddressAction) {
             $updateCustomerAction->execute($data, $customer);
-            $updateUserAction->execute($customer->user, $data);
+
 
             if (isset($data['address'])) {
                 if (isset($data['address']['id'])) {
@@ -262,18 +242,19 @@ class CustomerController extends Controller
         });
         return response()->json(['message' => __('Perfil updated successfully.')], 201);
     }
-    public function updatePassword(UpdatePasswordCustomerRequest $request, Customer $customer, UpdatePasswordUserAction $updatePasswordUserAction)
+    public function updatePassword(UpdatePasswordCustomerRequest $request, Customer $customer, UpdateCustomerAction $updateCustomerAction)
     {
         $data = $request->validated();
-        DB::transaction(function () use ($data, $customer, $updatePasswordUserAction) {
+        DB::transaction(function () use ($data, $customer, $updateCustomerAction) {
 
-            if (isset($data['password_current']) && !Hash::check($data['password_current'], $customer->user->password)) {
+            if (isset($data['password_current']) && !Hash::check($data['password_current'], $customer->password)) {
                 throw ValidationException::withMessages([
                     'password_current' => [__('The current password is different from the one provided')],
                 ]);
             }
 
-            $updatePasswordUserAction->execute($customer->user, $data);
+
+            $updateCustomerAction->execute($data, $customer);
         });
         return response()->json(['message' => __('Password updated successfully.')], 201);
     }

@@ -67,8 +67,9 @@ class EmployeeController extends Controller
         $data = $request->validated();
 
         $employee =  DB::transaction(function () use ($data, $storeUserAction, $storeEmployeeAction, $storePhoneAction) {
+            $user = $storeUserAction->execute($data);
+            $data['user_id'] = $user->id;
             $employee = $storeEmployeeAction->execute($data);
-            $user = $storeUserAction->execute($data, $employee);
             $storePhoneAction->execute($data['phones'], $employee);
             return $employee;
         });
@@ -153,10 +154,10 @@ class EmployeeController extends Controller
         $data = $request->validated();
 
         $user = Auth::user();
-        if ($user->userable->id != $employee->id) {
+
+        if ($user->employee->id != $employee->id) {
             return response()->json(['message' => __('You cannot edit a profile that is not yours.')], 400);
         }
-
 
         DB::transaction(function () use ($data, $employee, $updateEmployeeAction, $updateUserAction, $updatePhoneAction, $storePhoneAction, $deletePhoneAction) {
             $updateEmployeeAction->execute($employee, $data);

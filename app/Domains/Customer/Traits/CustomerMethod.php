@@ -35,6 +35,9 @@ trait CustomerMethod
     public function relationLoadWithTrashed(): void
     {
         $this->loadMissing([
+            'holder' => function ($query) {
+                $query->withTrashed();
+            },
             'phones' => function ($query) {
                 $query->withTrashed();
             },

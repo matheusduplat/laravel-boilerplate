@@ -39,6 +39,7 @@ describe('Login', function () {
         $user = User::where('email', $data['email'])->first();
         $user->update(['email_verified_at' => null]);
 
+
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(403)->assertJson([

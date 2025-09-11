@@ -25,6 +25,7 @@ class Employee extends Model implements Auditable
     protected $fillable = [
         'name',
         'status',
+        'user_id',
         'created_by',
         'updated_by',
         'deleted_by',

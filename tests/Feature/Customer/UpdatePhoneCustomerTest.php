@@ -11,12 +11,15 @@ use Laravel\Sanctum\Sanctum;
 uses(RefreshDatabase::class);
 beforeEach(function () {
     $this->seed();
+
     Customer::factory()
         ->count(5)
         ->has(Phone::factory()->count(2), 'phones')
         ->has(Address::factory(), 'address')
-        ->has(User::factory()->customer(), 'user')
-        ->create();
+        ->customerRole()
+        ->create([
+            'password' => '12345678',
+        ]);
     // $this->withoutExceptionHandling();
 });
 
@@ -93,7 +96,12 @@ describe('Update Phones Customer', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Customer::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,
@@ -109,13 +117,11 @@ describe('Update Phones Customer', function () {
 
     it('Atualizar telefone do cliente com sucesso sendo customer', function () {
         $customer = Customer::with(['phones'])->orderBy('id', 'desc')->get()->first();
-
         Sanctum::actingAs(
-            $customer->user,
+            $customer,
             ['*'],
+            'customer'
         );
-
-
         $phones = $customer->phones->toArray();
 
         $this->data = [
@@ -156,10 +162,10 @@ describe('Update Phones Customer', function () {
     });
 
     it('Erro ao atualizar um endereço que não pertence ao cliente autenticado', function () {
-        $customer = Customer::query()->first();
         Sanctum::actingAs(
-            $customer->user,
+            Customer::query()->first(),
             ['*'],
+            'customer'
         );
 
         $customer = Customer::with(['address'])->orderBy('id', 'desc')->get()->first();

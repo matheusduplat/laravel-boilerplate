@@ -1,6 +1,5 @@
 <?php
 
-use App\Domains\Employee\Model\Employee;
 use App\Domains\Phone\Model\Phone;
 use App\Domains\Role\Model\Role;
 use App\Domains\User\Model\User;
@@ -69,7 +68,12 @@ describe('Create Employee', function () {
     });
 
     it('Usuário sem permissão', function () {
-        $user =  User::factory()->for(Employee::factory(), 'userable')->create();
+        $user =  User::Create([
+            'name' => fake()->name(),
+            'email' => fake()->email(),
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ]);
 
         Sanctum::actingAs(
             $user,

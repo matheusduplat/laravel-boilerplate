@@ -45,6 +45,27 @@ class AuthController extends Controller
     }
 
     /**
+     * login cliente
+     * 
+     * Efetua o login do usuário cliente
+     * 
+     * @unauthenticated
+     * 
+    
+     */
+    #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
+    public function loginCustomer(LoginCustomerRequest $request, LoginCustomerAction $loginCustomerAction)
+    {
+        $data = $request->validated();
+        $data += [
+            'ip' => $request->ip(),
+            'User-Agent' => $request->header('User-Agent'),
+            'X-Device-Token' => $request->header('X-Device-Token'),
+        ];
+        return $loginCustomerAction->execute($data);
+    }
+
+    /**
      *
      * logout
      *
@@ -88,7 +109,7 @@ class AuthController extends Controller
      * @unauthenticated
      */
     #[HeaderParameter('X-Device-Token', 'Mobile enviar o mac address | Web enviar token gerado pelo browser', type: 'string')]
-    public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction)
+    public function verifyCode(VerifyCodeRequest $request, LoginAction $loginAction, TrustedDeviceAction $trustedDeviceAction, LoginCustomerAction $loginCustomerAction)
     {
 
         $data = $request->validated();
@@ -96,7 +117,7 @@ class AuthController extends Controller
         $code = $data['code'];
         $deviceToken = $request->header('X-Device-Token');
 
-        return DB::transaction(function () use ($email, $code, $deviceToken, $request, $loginAction, $trustedDeviceAction) {
+        return DB::transaction(function () use ($email, $code, $deviceToken, $request, $loginAction, $trustedDeviceAction, $loginCustomerAction) {
 
             $verification = CodeVerification::where('email', $email)
                 ->where('code', $code)
@@ -108,8 +129,12 @@ class AuthController extends Controller
             }
 
 
-            $user = User::where('email', $email)->firstOrFail();
-
+            if ($verification->guard == 'sanctum') {
+                $user = User::where('email', $email)->firstOrFail();
+            }
+            if ($verification->guard == 'customer') {
+                $user = Customer::where('email', $email)->firstOrFail();
+            }
 
 
             $verification->delete();
@@ -122,8 +147,11 @@ class AuthController extends Controller
                 $user->markEmailAsVerified();
             }
 
+            if ($verification->guard == 'sanctum') {
+                return $loginAction->authenticate($user);
+            }
 
-            return $loginAction->authenticate($user);
+            return $loginCustomerAction->authenticate($user);
         });
     }
 
