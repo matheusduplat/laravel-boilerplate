@@ -12,10 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 trait CustomerRelationship
 {
 
-    public function holder(): HasOne
-    {
-        return $this->hasOne(Customer::class, 'holder_id');
-    }
+
     public function phones(): MorphMany
     {
         return $this->morphMany(Phone::class, 'phoneable');

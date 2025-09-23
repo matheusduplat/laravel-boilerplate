@@ -36,7 +36,6 @@ class Customer extends Authenticatable implements Auditable, MustVerifyEmail
         'name_social',
         'cpf',
         'birth_date',
-        'holder_id',
         'email_verified_at',
         'first_access',
         'secure_login_email',

@@ -22,7 +22,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->date('birth_date');
             $table->boolean('secure_login_email')->default(false);
-            $table->foreignId('holder_id')->nullable()->constrained('customers');
             $table->boolean('first_access')->default(true);
             $table->string('status');
             $table->string('created_by')->nullable();

@@ -11,9 +11,7 @@ trait CustomerScope
     protected function relationWithTrashed(Builder $query): void
     {
         $query->with([
-            'holder' => function ($query) {
-                $query->withTrashed();
-            },
+
             'phones' => function ($query) {
                 $query->withTrashed();
             },
